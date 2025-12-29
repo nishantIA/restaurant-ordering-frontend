@@ -1,10 +1,8 @@
-/**
- * Customer Layout
- * Wraps all customer-facing pages with Header and modals
- */
 
-import { Header } from '@/components/shared/Header';
 import { ItemDetailModal } from '@/components/menu/ItemDetailModal';
+import { CartDrawer } from '@/components/cart/CartDrawer';
+import { CustomerHeader } from '@/components/shared/Header';
+
 
 export default function CustomerLayout({
   children,
@@ -13,11 +11,12 @@ export default function CustomerLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <CustomerHeader />
       <main className="container mx-auto px-4 py-6">{children}</main>
       
-      {/* Global Modals */}
+      {/* Global Modals & Drawers */}
       <ItemDetailModal />
+      <CartDrawer />
     </div>
   );
 }

@@ -1,11 +1,3 @@
-/**
- * Application Providers
- * 
- * Sets up:
- * - React Query (TanStack Query) for server state management
- * - Session initialization
- */
-
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -13,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, useEffect, type ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import { useSessionStore } from '@/lib/stores/session-store';
+import { WebSocketProvider } from '@/lib/websocket/WebSocketContext';
 import { CACHE_TIME } from '@/lib/utils/constants';
 
 /**
@@ -52,11 +45,13 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionInitializer>
-        {children}
-        <Toaster position="top-right" richColors />
-      </SessionInitializer>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <WebSocketProvider>
+        <SessionInitializer>
+          {children}
+          <Toaster position="top-right" richColors />
+        </SessionInitializer>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </WebSocketProvider>
     </QueryClientProvider>
   );
 }

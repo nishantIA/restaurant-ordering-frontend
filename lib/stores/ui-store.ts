@@ -24,6 +24,13 @@ export const useUIStore = create<UIState>((set) => ({
   // Item Detail Modal State
   isItemModalOpen: false,
   selectedItemId: null,
-  openItemModal: (itemId: string) => set({ isItemModalOpen: true, selectedItemId: itemId }),
-  closeItemModal: () => set({ isItemModalOpen: false, selectedItemId: null }),
+  openItemModal: (itemId: string) => {
+    console.log(' UIStore.openItemModal called with:', itemId);
+    set({ isItemModalOpen: true, selectedItemId: itemId });
+    console.log(' UIStore state updated');
+  },
+  closeItemModal: () => {
+    console.log(' UIStore.closeItemModal called');
+    set({ isItemModalOpen: false, selectedItemId: null });
+  },
 }));

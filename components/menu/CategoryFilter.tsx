@@ -55,7 +55,7 @@ export function CategoryFilter({
     return (
       <div className="flex gap-2 overflow-x-auto pb-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-10 w-24 flex-shrink-0" />
+          <Skeleton key={i} className="h-10 w-24 shrink-0" />
         ))}
       </div>
     );
@@ -68,7 +68,7 @@ export function CategoryFilter({
         variant={!selected ? 'default' : 'outline'}
         size="sm"
         onClick={() => onSelect(undefined)}
-        className="flex-shrink-0"
+        className="shrink-0"
       >
         All Items
       </Button>
@@ -93,7 +93,7 @@ export function CategoryFilter({
               variant={isSelected ? 'default' : 'outline'}
               size="sm"
               onClick={() => onSelect(category.id)}
-              className="flex-shrink-0 gap-2"
+              className="shrink-0 gap-2"
             >
               {category.name}
               {category.itemCount !== undefined && category.itemCount > 0 && (
@@ -112,7 +112,7 @@ export function CategoryFilter({
               <Button
                 variant={isActive ? 'default' : 'outline'}
                 size="sm"
-                className="flex-shrink-0 gap-1"
+                className="shrink-0 gap-1"
               >
                 {selectedCategory && hasSelectedChild 
                   ? selectedCategory.name 
@@ -126,7 +126,7 @@ export function CategoryFilter({
                 onClick={() => onSelect(category.id)}
                 className="cursor-pointer"
               >
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center cursor-pointer justify-between w-full">
                   <span>All {category.name}</span>
                   {category.itemCount !== undefined && category.itemCount > 0 && (
                     <Badge variant="secondary" className="ml-2">

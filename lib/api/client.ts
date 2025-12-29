@@ -57,7 +57,7 @@ class ApiClient {
     // Ensure baseURL ends with trailing slash
     this.baseURL = config.baseURL.endsWith('/') ? config.baseURL : `${config.baseURL}/`;
     this.timeout = config.timeout || 30000;
-    console.log('🔧 API Client initialized with BASE_URL:', this.baseURL);
+    console.log(' API Client initialized with BASE_URL:', this.baseURL);
   }
 
   /**

@@ -1,8 +1,3 @@
-/**
- * Menu Page (Main Customer Page)
- * Displays menu items with filters, search, and categories
- */
-
 'use client';
 
 import { useMenu } from '@/lib/hooks/use-menu';
@@ -12,22 +7,25 @@ import { MenuGrid } from '@/components/menu/MenuGrid';
 import { ErrorDisplay } from '@/components/shared/ErrorDisplay';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { DietaryFilter } from '@/components/menu/DietaryFilter';
 
 export default function MenuPage() {
   const {
     categories,
     items,
-    pagination,
     isLoadingCategories,
     isLoadingItems,
     categoriesError,
     itemsError,
     filters,
     hasFilters,
+    setDietaryTags,
     setSearch,
     setCategory,
-    setPage,
     clearFilters,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
     refetchItems,
     refetchCategories,
   } = useMenu();
@@ -76,6 +74,14 @@ export default function MenuPage() {
         isLoading={isLoadingCategories}
       />
 
+      <div>
+        <h3 className="text-sm font-medium mb-3">Dietary Preferences</h3>
+        <DietaryFilter
+          selected={filters.dietaryTags || []}
+          onChange={setDietaryTags}
+        />
+      </div>
+
       {/* Active Filters Indicator */}
       {hasFilters && (
         <div className="flex items-center gap-2">
@@ -96,8 +102,9 @@ export default function MenuPage() {
       <MenuGrid
         items={items}
         isLoading={isLoadingItems}
-        pagination={pagination}
-        onPageChange={setPage}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={fetchNextPage}
       />
     </div>
   );

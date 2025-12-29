@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'; // Add useCallback
+import { useState, useMemo, useCallback } from 'react';
 import { useCategories, useMenuItems } from './queries';
 import { MenuFilters } from '@/types/menu';
 import { PAGINATION } from '@/lib/utils/constants';
@@ -19,8 +19,14 @@ export function useMenu() {
   const categories = useCategories(false);
   const menuItems = useMenuItems(filters);
 
+  // Flatten pages for infinite scroll
+  const items = useMemo(
+    () => menuItems.data?.pages.flatMap((page) => page.items) ?? [],
+    [menuItems.data]
+  );
+
   const itemCount = useMemo(
-    () => menuItems.data?.pagination?.total ?? 0,
+    () => menuItems.data?.pages[0]?.pagination?.total ?? 0,
     [menuItems.data]
   );
 
@@ -34,7 +40,6 @@ export function useMenu() {
     [filters]
   );
 
-  // Actions
   const updateFilters = useCallback((newFilters: Partial<MenuFilters>) => {
     setFilters((prev) => ({
       ...prev,
@@ -57,10 +62,6 @@ export function useMenu() {
     });
   }, []);
 
-  const setPage = useCallback((page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
-  }, []);
-
   const setSearch = useCallback((search: string) => {
     setFilters((prev) => ({ ...prev, search, page: 1 }));
   }, []);
@@ -69,10 +70,20 @@ export function useMenu() {
     setFilters((prev) => ({ ...prev, categoryId, page: 1 }));
   }, []);
 
+
+  const setDietaryTags = useCallback((dietaryTags: string[]) => {
+    setFilters((prev) => ({ ...prev, dietaryTags, page: 1 }));
+  }, []);
+
+
+  const setPriceRange = useCallback((minPrice?: number, maxPrice?: number) => {
+    setFilters((prev) => ({ ...prev, minPrice, maxPrice, page: 1 }));
+  }, []);
+
   return {
     categories: categories.data || [],
-    items: menuItems.data?.items || [],
-    pagination: menuItems.data?.pagination,
+    items, // Now contains ALL loaded items
+    pagination: menuItems.data?.pages[0]?.pagination,
 
     isLoadingCategories: categories.isLoading,
     isLoadingItems: menuItems.isLoading,
@@ -87,9 +98,15 @@ export function useMenu() {
 
     updateFilters,
     clearFilters,
-    setPage,
     setSearch,
     setCategory,
+    setDietaryTags,
+    setPriceRange, 
+
+    // Infinite scroll
+    hasNextPage: menuItems.hasNextPage,
+    isFetchingNextPage: menuItems.isFetchingNextPage,
+    fetchNextPage: menuItems.fetchNextPage,
 
     refetchCategories: categories.refetch,
     refetchItems: menuItems.refetch,

@@ -65,7 +65,7 @@ export function SearchSuggestions({
                   {item.category.name}
                 </div>
               </div>
-              <div className="ml-3 font-semibold text-sm flex-shrink-0">
+              <div className="ml-3 font-semibold text-sm shrink-0">
                 ${item.basePrice.toFixed(2)}
               </div>
             </button>

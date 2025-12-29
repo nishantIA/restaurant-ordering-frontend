@@ -1,97 +1,93 @@
-/**
- * MenuGrid Component
- * Displays menu items in a responsive grid with pagination
- */
-
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { MenuItem } from '@/types/menu';
-import { MenuItemCard } from './MenuItemCard';
-import { MenuSkeleton } from './MenuSkeleton';
-import { EmptyState } from '@/components/shared/EmptyState';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, UtensilsCrossed } from 'lucide-react';
+import { MenuCardSkeleton } from './MenuCardSkeleton';
+import { MenuCard } from './MenuCard';
+
 
 interface MenuGridProps {
   items: MenuItem[];
-  isLoading: boolean;
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrevious: boolean;
-  };
-  onPageChange?: (page: number) => void;
+  isLoading?: boolean;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  onLoadMore?: () => void;
 }
 
 export function MenuGrid({
   items,
   isLoading,
-  pagination,
-  onPageChange,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMore,
 }: MenuGridProps) {
-  // Loading state
-  if (isLoading) {
-    return <MenuSkeleton count={6} />;
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  // Intersection observer for infinite scroll
+  useEffect(() => {
+    if (!onLoadMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          onLoadMore();
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, onLoadMore]);
+
+  // Initial loading
+  if (isLoading && items.length === 0) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <MenuCardSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
-  // Empty state
-  if (items.length === 0) {
+  // No items
+  if (!isLoading && items.length === 0) {
     return (
-      <EmptyState
-        icon={UtensilsCrossed}
-        title="No items found"
-        description="Try adjusting your filters or search query"
-      />
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">No items found</p>
+      </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Items Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
-          <MenuItemCard key={item.id} item={item} />
+          <MenuCard key={item.id} item={item} />
         ))}
       </div>
 
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange?.(pagination.page - 1)}
-            disabled={!pagination.hasPrevious}
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous
-          </Button>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              Page {pagination.page} of {pagination.totalPages}
-            </span>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange?.(pagination.page + 1)}
-            disabled={!pagination.hasNext}
-          >
-            Next
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
+      {/* Loading More */}
+      {isFetchingNextPage && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <MenuCardSkeleton key={i} />
+          ))}
         </div>
       )}
 
-      {/* Items count */}
-      {pagination && (
-        <div className="text-center text-sm text-muted-foreground">
-          Showing {items.length} of {pagination.total} items
+      {/* Intersection Observer Target */}
+      <div ref={observerTarget} className="h-10" />
+
+      {/* End of List */}
+      {!hasNextPage && items.length > 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          You&apos;ve seen all items ({items.length})
         </div>
       )}
     </div>
