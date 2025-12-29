@@ -1,36 +1,228 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍽️ Restaurant Ordering System
 
-## Getting Started
+A modern, real-time restaurant ordering platform with live order tracking and kitchen management.
 
-First, run the development server:
+**Live Demo:** https://restaurant-ordering-frontend.vercel.app  
+**Backend API:** https://restaurant-ordering-backend-production.up.railway.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🔗 Links
+
+- **Live Application:** https://restaurant-ordering-frontend.vercel.app
+- **Backend API:** https://restaurant-ordering-backend-production.up.railway.app
+- **Frontend Repo:** https://github.com/nishantIA/restaurant-ordering-frontend
+- **Backend Repo:** https://github.com/nishantIA/restaurant-ordering-backend
+- **Backend API Docs:** https://restaurant-ordering-backend-production.up.railway.app/api/docs
+
+- **Customer Route:** https://restaurant-ordering-frontend.vercel.app
+- **Admin Route:** https://restaurant-ordering-frontend.vercel.app/dashboard
+- **Admin Login Route:**https://restaurant-ordering-frontend.vercel.app/kitchen/login
+
+**🔑 Admin Password:** `kitchen123`
+
+---
+
+## 🗺️ Routes
+
+### **Customer Routes**
+| Route | Description |
+|-------|-------------|
+| `/` | Menu browser & ordering |
+| `/checkout` | Cart checkout & payment |
+| `/orders/[orderNumber]` | Real-time order tracking |
+
+### **Kitchen/Admin Routes**
+| Route | Description |
+|-------|-------------|
+| `/kitchen/login` | Authentication |
+| `/kitchen/dashboard` | Order management dashboard |
+
+**🔑 Admin Password:** `kitchen123`
+
+---
+
+
+## 🏗️ Architecture
+
+**Frontend:** Next.js 16 (App Router) + React 19 + TypeScript  
+**State Management:** TanStack Query + Zustand  
+**Real-time:** Socket.io for live order updates  
+**Styling:** Tailwind CSS + ShadCN UI
+
+---
+
+## ✨ Features
+
+### **Customer Side**
+- 🔍 Menu browser with search & filters (category, dietary, price)
+- 🎨 Advanced customization (simple + complex multi-level)
+- 🛒 Session-based cart with real-time validation
+- 💳 Mock payment gateway (95% success rate)
+- 📊 Real-time order tracking via WebSocket
+
+### **Kitchen/Admin Side**
+- 🔐 Password-protected dashboard
+- 📋 Live order notifications
+- ⚡ Status management (Received → Preparing → Ready → Completed)
+- 📊 Order filtering & statistics
+
+---
+
+
+## 📋 Project Assumptions
+
+✅ **Single Location:** System designed for one restaurant location  
+✅ **Single Admin:** One kitchen dashboard (no multi-user admin roles)  
+✅ **Dine-in Orders:** Customers order from table, pick up when ready  
+✅ **No Delivery:** Order tracking ends at "Ready" status  
+✅ **Session-based:** No customer login required (anonymous ordering)  
+✅ **Mock Payment:** Payment gateway simulated for demo purposes
+
+---
+
+## 🔄 Application Flow
+
+### **Customer Journey**
+```
+1. Browse Menu (/)
+   ↓ Search & filter items
+2. Select Item → Customize
+   ↓ Add size, toppings, modifiers
+3. Add to Cart → Review
+   ↓ View cart with real-time pricing
+4. Checkout → Payment
+   ↓ Enter contact info (optional)
+5. Track Order (Real-time)
+   ↓ Received → Preparing → Ready → Completed
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### **Kitchen Workflow**
+```
+1. Login (/kitchen/login)
+   ↓ Password: kitchen123
+2. Dashboard → View Orders
+   ↓ Real-time notifications
+3. Update Status
+   ↓ Preparing → Ready → Completed
+4. Customer Notified
+   ↓ Instant WebSocket update
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔴 Live Updates (WebSocket)
 
-## Learn More
+**Customer:** Receives instant notifications when order status changes  
+**Kitchen:** Gets real-time alerts for new orders  
+**Connection:** Auto-reconnect on disconnect
 
-To learn more about Next.js, take a look at the following resources:
+```
+Order Status Change → Server → Customer & Kitchen (instant update)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Quick Start
 
-## Deploy on Vercel
+### **Installation**
+```bash
+# Clone repository
+git clone https://github.com/nishantIA/restaurant-ordering-frontend
+cd restaurant-ordering-frontend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Install dependencies
+npm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Setup environment
+cp .env.example .env.local
+```
+
+### **Environment Variables**
+```env
+# .env.local
+NEXT_PUBLIC_API_URL=https://restaurant-ordering-backend-production.up.railway.app/api/v1
+NEXT_PUBLIC_KITCHEN_PASSWORD=kitchen123
+```
+
+### **Run Development**
+```bash
+npm run dev
+# Open http://localhost:3000
+```
+
+### **Build for Production**
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 🧪 Testing Guide
+
+### **Test Customer Flow**
+1. Visit homepage → Search "pizza"
+2. Click item → Select customizations (Large, Extra Cheese)
+3. Add to cart → Checkout
+4. Enter phone: `1234567890` → Process payment
+5. Track order → Observe real-time updates
+
+### **Test Kitchen Flow**
+1. Navigate to `/kitchen/login` → Enter `kitchen123`
+2. View dashboard → See new order notification
+3. Click "Mark as Preparing" → Customer sees update instantly
+4. Continue: Ready → Completed
+
+---
+
+## 🎯 Key Highlights
+
+### **Performance**
+✅ React Query caching (5-min stale time)  
+✅ Infinite scroll for menu  
+✅ Optimistic UI updates  
+✅ Debounced search (300ms)
+
+### **UX Features**
+✅ Responsive design (mobile-first)  
+✅ Loading skeletons  
+✅ Toast notifications  
+✅ Error boundaries  
+✅ Accessible (ARIA, keyboard nav)
+
+### **Edge Cases Handled**
+✅ Cart persistence (24hr)  
+✅ Real-time price recalculation  
+✅ Stock validation  
+✅ WebSocket reconnection  
+✅ Session timeout handling
+
+---
+
+## 📦 Tech Stack
+
+```json
+{
+  "framework": "Next.js 16",
+  "language": "TypeScript",
+  "ui": "React 19 + Tailwind CSS",
+  "state": "TanStack Query + Zustand",
+  "realtime": "Socket.io Client",
+  "forms": "React Hook Form + Zod"
+}
+```
+
+
+
+## 📝 Additional Notes
+
+- Kitchen password is hardcoded for demo purposes
+- Payment gateway is mocked with 95% success rate
+- Cart session expires after 24 hours
+- Real-time features require active WebSocket connection
+- Designed for single-location restaurant operations
+
+---
+
+**Built with ❤️ using Next.js 16 & React 19**
